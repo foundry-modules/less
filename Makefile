@@ -1,7 +1,7 @@
 #
 # Run all tests
 #
-test: 
+test:
 	node test/less-test.js
 
 #
@@ -15,8 +15,7 @@ benchmark:
 #
 SRC = lib/less
 HEADER = build/header.js
-VERSION = `cat package.json | grep version \
-														| grep -o '[0-9]\.[0-9]\.[0-9]\+'`
+VERSION = $(shell cat package.json | grep version | grep -o '[0-9]\.[0-9]\.[0-9]\+')
 DIST = dist/less-${VERSION}.js
 RHINO = dist/less-rhino-${VERSION}.js
 DIST_MIN = dist/less-${VERSION}.min.js
@@ -37,6 +36,12 @@ less:
 	      ${SRC}/browser.js >> ${DIST}
 	@@echo "})(window);" >> ${DIST}
 	@@echo ${DIST} built.
+
+foundry: less modularize
+
+modularize:
+	../../build/modularize -n "less" ${DIST} > ../../scripts_/less.js
+	uglifyjs --unsafe -nc ../../scripts_/less.js > ../../scripts/less.js
 
 rhino:
 	@@mkdir -p dist
