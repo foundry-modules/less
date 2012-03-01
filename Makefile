@@ -1,3 +1,13 @@
+include ../../build/modules.mk
+
+MODULE = less
+FILENAME = ${MODULE}.js
+PRODUCTION = ${PRODUCTION_DIR}/${FILENAME}
+DEVELOPMENT = ${DEVELOPMENT_DIR}/${FILENAME}
+
+all: less foundry
+
+
 #
 # Run all tests
 #
@@ -37,11 +47,9 @@ less:
 	@@echo "})(window);" >> ${DIST}
 	@@echo ${DIST} built.
 
-foundry: less modularize
-
-modularize:
-	../../build/modularize -n "less" ${DIST} > ../../scripts_/less.js
-	uglifyjs --unsafe -nc ../../scripts_/less.js > ../../scripts/less.js
+foundry:
+	${MODULARIZE} -n "${MODULE}" ${DIST} > ${DEVELOPMENT}
+	${UGLIFYJS} ${DEVELOPMENT} > ${PRODUCTION}
 
 rhino:
 	@@mkdir -p dist
